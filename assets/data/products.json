@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title_en": "Elixir Perfume",
+    "title_ar": "عطر إيليكسير",
+    "price": 150,
+    "old_price": 200,
+    "category": "Fragrance",
+    "image": "assets/images/perfume1.jpg",
+    "rating": 4.5,
+    "ratings_count": 120,
+    "discount": 25
+  },
+  {
+    "id": 2,
+    "title_en": "Nourish Cream",
+    "title_ar": "كريم نورش",
+    "price": 80,
+    "old_price": 100,
+    "category": "Skincare",
+    "image": "assets/images/cream1.jpg",
+    "rating": 4.0,
+    "ratings_count": 45,
+    "discount": 20
+  },
+  {
+    "id": 3,
+    "title_en": "Glow Serum",
+    "title_ar": "سيروم جلو",
+    "price": 95,
+    "old_price": 0,
+    "category": "Skincare",
+    "image": "assets/images/serum1.jpg",
+    "rating": 4.8,
+    "ratings_count": 200,
+    "discount": 0
+  },
+  {
+    "id": 4,
+    "title_en": "Velvet Lipstick",
+    "title_ar": "أحمر شفاه فيلفيت",
+    "price": 45,
+    "old_price": 60,
+    "category": "Makeup",
+    "image": "assets/images/lipstick1.jpg",
+    "rating": 4.2,
+    "ratings_count": 80,
+    "discount": 25
+  },
+  {
+    "id": 5,
+    "title_en": "Hydra Mask",
+    "title_ar": "قناع هيدرا",
+    "price": 60,
+    "old_price": 75,
+    "category": "Skincare",
+    "image": "assets/images/mask1.jpg",
+    "rating": 4.6,
+    "ratings_count": 65,
+    "discount": 20
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title_en": "Skin Hydration Tips",
+    "title_ar": "نصائح ترطيب البشرة",
+    "content_en": "Drink water and use a moisturizer daily to keep skin hydrated.",
+    "content_ar": "اشرب ماءًا واستخدم مرطبًا يوميًا للحفاظ على رطوبة البشرة."
+  },
+  {
+    "id": 2,
+    "title_en": "Sun Protection",
+    "title_ar": "حماية من الشمس",
+    "content_en": "Use SPF 30+ sunscreen every day. Reapply as needed.",
+    "content_ar": "استخدم واقي شمس SPF 30+ يوميًا وأعد التطبيق عند الحاجة."
+  },
+  {
+    "id": 3,
+    "title_en": "Gentle Cleansing",
+    "title_ar": "تنظيف لطيف",
+    "content_en": "Use a gentle cleanser and avoid harsh scrubs to protect the skin barrier.",
+    "content_ar": "استخدم منظفًا لطيفًا وتجنّب الفرك القاسي لحماية حاجز البشرة."
+  }
+]

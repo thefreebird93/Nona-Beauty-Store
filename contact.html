@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contact Us - Nona Beauty</title>
+  <link rel="icon" href="assets/images/favicon.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-theme="light">
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        <i class="fas fa-spa"></i>
+        Nona Beauty
+      </div>
+      
+      <nav class="nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="products.html" class="nav-link">
+          <i class="fas fa-shopping-bag"></i>
+          <span>Products</span>
+        </a>
+        <a href="about.html" class="nav-link">
+          <i class="fas fa-info-circle"></i>
+          <span>About Us</span>
+        </a>
+        <a href="contact.html" class="nav-link active">
+          <i class="fas fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+        
+        <div class="controls" id="topControls">
+          <button class="btn cart-btn" id="cartBtn" aria-label="Shopping Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </button>
+          <button class="btn" id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="btn" id="langToggle" aria-label="Toggle language">AR</button>
+          <button class="btn primary" id="loginBtn" aria-label="Login">Login</button>
+        </div>
+      </nav>
+      
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="contact-hero">
+      <h1>Get In Touch</h1>
+      <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+    </div>
+    
+    <div class="contact-container">
+      <div class="contact-info">
+        <h2>Contact Information</h2>
+        
+        <div class="contact-method">
+          <i class="fas fa-map-marker-alt"></i>
+          <div>
+            <h3>Visit Us</h3>
+            <p>123 Beauty Street<br>Cosmetics City, CC 12345</p>
+          </div>
+        </div>
+        
+        <div class="contact-method">
+          <i class="fas fa-phone"></i>
+          <div>
+            <h3>Call Us</h3>
+            <p>+1 (555) 123-4567<br>Mon-Fri from 8am to 6pm</p>
+          </div>
+        </div>
+        
+        <div class="contact-method">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <h3>Email Us</h3>
+            <p>info@nonabeauty.com<br>support@nonabeauty.com</p>
+          </div>
+        </div>
+        
+        <div class="contact-method">
+          <i class="fas fa-clock"></i>
+          <div>
+            <h3>Business Hours</h3>
+            <p>Monday - Friday: 9:00 - 18:00<br>Saturday: 10:00 - 16:00<br>Sunday: Closed</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="contact-form-container">
+        <form class="contact-form" id="contactForm">
+          <h2>Send us a Message</h2>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactName">Full Name *</label>
+              <input type="text" id="contactName" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email Address *</label>
+              <input type="email" id="contactEmail" name="email" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="contactSubject">Subject</label>
+            <input type="text" id="contactSubject" name="subject">
+          </div>
+          
+          <div class="form-group">
+            <label for="contactMessage">Message *</label>
+            <textarea id="contactMessage" name="message" rows="6" required></textarea>
+          </div>
+          
+          <button type="submit" class="btn primary full-width">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>What is your return policy?</h3>
+          <p>We offer a 30-day return policy for all unused products in their original packaging.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do you offer international shipping?</h3>
+          <p>Yes, we ship to most countries worldwide. Shipping costs vary by location.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Are your products cruelty-free?</h3>
+          <p>Absolutely! All our products are cruelty-free and never tested on animals.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How can I track my order?</h3>
+          <p>You'll receive a tracking number via email once your order ships.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/main_v4.js"></script>
+  <script src="assets/js/auth_v4.js"></script>
+  <script src="assets/js/cart_v1.js"></script>
+</body>
+</html>
