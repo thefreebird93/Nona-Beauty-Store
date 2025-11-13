@@ -1,4 +1,4 @@
-// Nona Beauty - Main JavaScript File (Unified)
+// Nona Beauty - Main JavaScript
 class NonaBeautyApp {
     constructor() {
         this.currentLanguage = 'ar';
@@ -12,157 +12,125 @@ class NonaBeautyApp {
         this.setupEventListeners();
         this.loadProducts();
         this.updateCartCount();
-        this.setupAccessibility();
+        this.loadPreferences();
     }
 
-    // Setup event listeners
     setupEventListeners() {
         // Theme toggle
-        document.getElementById('themeToggle')?.addEventListener('click', () => this.toggleTheme());
-        
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+
         // Language toggle
-        document.getElementById('langToggle')?.addEventListener('click', () => this.toggleLanguage());
-        
+        const langToggle = document.getElementById('langToggle');
+        if (langToggle) {
+            langToggle.addEventListener('click', () => this.toggleLanguage());
+        }
+
         // Mobile menu
-        document.getElementById('mobileMenuBtn')?.addEventListener('click', () => this.toggleMobileMenu());
-        
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => this.toggleMobileMenu());
+        }
+
         // Cart functionality
-        document.getElementById('cartBtn')?.addEventListener('click', () => this.openCart());
-        document.getElementById('closeCart')?.addEventListener('click', () => this.closeCart());
-        
-        // Search functionality
-        document.getElementById('searchInput')?.addEventListener('input', (e) => this.handleSearch(e));
-        
+        const cartBtn = document.getElementById('cartBtn');
+        if (cartBtn) {
+            cartBtn.addEventListener('click', () => this.openCart());
+        }
+
+        const closeCart = document.getElementById('closeCart');
+        if (closeCart) {
+            closeCart.addEventListener('click', () => this.closeCart());
+        }
+
         // Login button
-        document.getElementById('loginBtn')?.addEventListener('click', () => this.handleLogin());
-    }
-
-    // Setup accessibility features
-    setupAccessibility() {
-        // Add skip link
-        this.addSkipLink();
-        
-        // Handle keyboard navigation
-        document.addEventListener('keydown', (e) => this.handleKeyboardNavigation(e));
-        
-        // Add ARIA labels where needed
-        this.enhanceAccessibility();
-    }
-
-    addSkipLink() {
-        const skipLink = document.createElement('a');
-        skipLink.href = '#main-content';
-        skipLink.className = 'skip-link';
-        skipLink.textContent = 'انتقل إلى المحتوى الرئيسي';
-        document.body.prepend(skipLink);
-    }
-
-    handleKeyboardNavigation(e) {
-        // Close cart on Escape key
-        if (e.key === 'Escape') {
-            this.closeCart();
-            this.closeMobileMenu();
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                window.location.href = 'login.html';
+            });
         }
-        
-        // Trap focus in cart when open
-        if (e.key === 'Tab' && document.getElementById('cartSidebar')?.classList.contains('open')) {
-            this.trapFocusInCart(e);
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => this.handleSearch(e));
         }
-    }
 
-    trapFocusInCart(e) {
-        const cart = document.getElementById('cartSidebar');
-        const focusableElements = cart.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey && document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-        }
-    }
-
-    enhanceAccessibility() {
-        // Add ARIA labels to icons
-        document.querySelectorAll('.fas, .fab').forEach(icon => {
-            if (!icon.getAttribute('aria-label')) {
-                const parent = icon.closest('button, a');
-                if (parent && parent.textContent.trim()) {
-                    icon.setAttribute('aria-hidden', 'true');
-                }
+        // Close cart when clicking outside
+        document.addEventListener('click', (e) => {
+            const cartSidebar = document.getElementById('cartSidebar');
+            const cartBtn = document.getElementById('cartBtn');
+            if (cartSidebar && cartSidebar.classList.contains('open') && 
+                !cartSidebar.contains(e.target) && 
+                !cartBtn.contains(e.target)) {
+                this.closeCart();
             }
         });
     }
 
-    // Theme management
     toggleTheme() {
         this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         document.body.setAttribute('data-theme', this.currentTheme);
-        document.getElementById('themeToggle').querySelector('i').className = 
-            this.currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
         
-        // Save preference
+        const themeIcon = document.querySelector('#themeToggle i');
+        if (themeIcon) {
+            themeIcon.className = this.currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        
         localStorage.setItem('nona-theme', this.currentTheme);
     }
 
-    // Language management
     toggleLanguage() {
         this.currentLanguage = this.currentLanguage === 'ar' ? 'en' : 'ar';
-        document.getElementById('langToggle').textContent = 
-            this.currentLanguage === 'ar' ? 'EN' : 'AR';
+        const langToggle = document.getElementById('langToggle');
+        if (langToggle) {
+            langToggle.textContent = this.currentLanguage === 'ar' ? 'EN' : 'AR';
+        }
         
-        // Update page direction
         document.documentElement.dir = this.currentLanguage === 'ar' ? 'rtl' : 'ltr';
         document.documentElement.lang = this.currentLanguage;
-        
-        // Save preference
         localStorage.setItem('nona-language', this.currentLanguage);
         
-        // Reload content
         this.updateContentLanguage();
     }
 
     updateContentLanguage() {
-        // This would typically make API calls to get translated content
         console.log('Updating content for language:', this.currentLanguage);
+        // Here you would typically update all text content based on language
     }
 
-    // Mobile menu
     toggleMobileMenu() {
         const nav = document.getElementById('mainNav');
         const menuBtn = document.getElementById('mobileMenuBtn');
-        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
         
         nav.classList.toggle('mobile-open');
-        menuBtn.setAttribute('aria-expanded', !isExpanded);
-        menuBtn.querySelector('i').className = isExpanded ? 'fas fa-bars' : 'fas fa-times';
-    }
-
-    closeMobileMenu() {
-        const nav = document.getElementById('mainNav');
-        const menuBtn = document.getElementById('mobileMenuBtn');
+        const isOpen = nav.classList.contains('mobile-open');
         
-        nav.classList.remove('mobile-open');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        menuBtn.querySelector('i').className = 'fas fa-bars';
+        if (menuBtn) {
+            menuBtn.setAttribute('aria-expanded', isOpen);
+            const icon = menuBtn.querySelector('i');
+            if (icon) {
+                icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+            }
+        }
     }
 
-    // Cart functionality
     openCart() {
-        document.getElementById('cartSidebar').classList.add('open');
-        document.getElementById('cartSidebar').setAttribute('aria-hidden', 'false');
-        
-        // Trap focus in cart
-        const firstFocusable = document.getElementById('cartSidebar').querySelector('button, [href], input');
-        firstFocusable?.focus();
+        const cartSidebar = document.getElementById('cartSidebar');
+        if (cartSidebar) {
+            cartSidebar.classList.add('open');
+            this.renderCartItems();
+        }
     }
 
     closeCart() {
-        document.getElementById('cartSidebar').classList.remove('open');
-        document.getElementById('cartSidebar').setAttribute('aria-hidden', 'true');
+        const cartSidebar = document.getElementById('cartSidebar');
+        if (cartSidebar) {
+            cartSidebar.classList.remove('open');
+        }
     }
 
     addToCart(product, quantity = 1) {
@@ -194,7 +162,6 @@ class NonaBeautyApp {
         const countElement = document.querySelector('.cart-count');
         if (countElement) {
             countElement.textContent = count;
-            countElement.setAttribute('aria-label', `${count} عناصر في عربة التسوق`);
         }
     }
 
@@ -203,21 +170,23 @@ class NonaBeautyApp {
         if (!cartItems) return;
 
         if (this.cart.length === 0) {
-            cartItems.innerHTML = '<p class="empty-cart">عربة التسوق فارغة</p>';
+            cartItems.innerHTML = '<p style="text-align: center; color: var(--text-light);">عربة التسوق فارغة</p>';
             return;
         }
 
         cartItems.innerHTML = this.cart.map(item => `
-            <div class="cart-item" role="listitem">
-                <img src="${item.image}" alt="${item.title}" loading="lazy">
+            <div class="cart-item">
+                <div class="placeholder-image" style="width: 80px; height: 80px;">
+                    <i class="fas fa-image"></i>
+                </div>
                 <div class="cart-item-details">
                     <h4>${item.title}</h4>
                     <div class="cart-item-price">$${item.price}</div>
                     <div class="cart-item-quantity">
-                        <button class="quantity-btn decrease" aria-label="تقليل الكمية" data-id="${item.id}">-</button>
+                        <button class="quantity-btn decrease" data-id="${item.id}">-</button>
                         <span>${item.quantity}</span>
-                        <button class="quantity-btn increase" aria-label="زيادة الكمية" data-id="${item.id}">+</button>
-                        <button class="btn remove-btn" aria-label="إزالة المنتج" data-id="${item.id}">
+                        <button class="quantity-btn increase" data-id="${item.id}">+</button>
+                        <button class="btn remove-btn" data-id="${item.id}" style="margin-right: auto;">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -225,24 +194,24 @@ class NonaBeautyApp {
             </div>
         `).join('');
 
-        // Add event listeners for quantity buttons
+        // Add event listeners
         cartItems.querySelectorAll('.decrease').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.dataset.id;
+                const id = e.target.closest('button').dataset.id;
                 this.updateQuantity(id, -1);
             });
         });
 
         cartItems.querySelectorAll('.increase').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.dataset.id;
+                const id = e.target.closest('button').dataset.id;
                 this.updateQuantity(id, 1);
             });
         });
 
         cartItems.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = e.target.dataset.id;
+                const id = e.target.closest('button').dataset.id;
                 this.removeFromCart(id);
             });
         });
@@ -251,7 +220,7 @@ class NonaBeautyApp {
     }
 
     updateQuantity(productId, change) {
-        const item = this.cart.find(item => item.id === productId);
+        const item = this.cart.find(item => item.id == productId);
         if (item) {
             item.quantity += change;
             if (item.quantity <= 0) {
@@ -284,18 +253,53 @@ class NonaBeautyApp {
         }
     }
 
-    // Product management
     async loadProducts() {
         try {
-            this.showLoading();
-            const response = await fetch('data/products.json');
-            this.products = await response.json();
+            // Sample products data
+            this.products = [
+                {
+                    id: 1,
+                    title: "عطر إيليكسير",
+                    price: 150,
+                    old_price: 200,
+                    category: "Fragrance",
+                    image: "assets/images/products/perfume1.jpg",
+                    rating: 4.5
+                },
+                {
+                    id: 2,
+                    title: "كريم نورش",
+                    price: 80,
+                    old_price: 100,
+                    category: "Skincare",
+                    image: "assets/images/products/cream1.jpg",
+                    rating: 4.0
+                },
+                {
+                    id: 3,
+                    title: "سيروم جلو",
+                    price: 95,
+                    old_price: 0,
+                    category: "Skincare",
+                    image: "assets/images/products/serum1.jpg",
+                    rating: 4.8
+                },
+                {
+                    id: 4,
+                    title: "أحمر شفاه فيلفيت",
+                    price: 45,
+                    old_price: 60,
+                    category: "Makeup",
+                    image: "assets/images/products/lipstick1.jpg",
+                    rating: 4.2
+                }
+            ];
+
             this.renderFeaturedProducts();
-            this.hideLoading();
         } catch (error) {
             console.error('Error loading products:', error);
-            this.hideLoading();
-            this.showNotification('حدث خطأ في تحميل المنتجات', 'error');
+            // Fallback to sample data
+            this.renderFeaturedProducts();
         }
     }
 
@@ -303,10 +307,10 @@ class NonaBeautyApp {
         const grid = document.getElementById('featuredProductsGrid');
         if (!grid) return;
 
-        const featuredProducts = this.products.slice(0, 6); // Show first 6 products
+        const featuredProducts = this.products.slice(0, 4);
         grid.innerHTML = featuredProducts.map(product => this.createProductCard(product)).join('');
 
-        // Add event listeners to product cards
+        // Add event listeners
         grid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const productId = e.target.closest('.product-card').dataset.id;
@@ -323,19 +327,21 @@ class NonaBeautyApp {
             Math.round(((product.old_price - product.price) / product.old_price) * 100) : 0;
 
         return `
-            <div class="product-card" data-id="${product.id}" role="listitem">
+            <div class="product-card" data-id="${product.id}">
                 ${discount > 0 ? `<div class="discount-badge">${discount}%</div>` : ''}
-                <img src="${product.image}" alt="${product.title}" loading="lazy">
+                <div class="placeholder-image" style="height: 200px; margin-bottom: 1rem;">
+                    <i class="fas fa-image" style="font-size: 3rem;"></i>
+                </div>
                 <h3>${product.title}</h3>
                 <div class="product-price">
                     <span class="current-price">$${product.price}</span>
                     ${product.old_price ? `<span class="old-price">$${product.old_price}</span>` : ''}
                 </div>
                 <div class="product-actions">
-                    <button class="btn primary add-to-cart-btn" aria-label="إضافة إلى عربة التسوق">
+                    <button class="btn primary add-to-cart-btn">
                         <i class="fas fa-shopping-cart"></i> إضافة إلى العربة
                     </button>
-                    <button class="btn secondary wishlist-btn" aria-label="إضافة إلى المفضلة">
+                    <button class="btn secondary wishlist-btn">
                         <i class="fas fa-heart"></i>
                     </button>
                 </div>
@@ -343,71 +349,42 @@ class NonaBeautyApp {
         `;
     }
 
-    // Search functionality
     handleSearch(e) {
         const searchTerm = e.target.value.toLowerCase();
-        // Implement search logic here
         console.log('Searching for:', searchTerm);
-    }
-
-    // Login functionality
-    handleLogin() {
-        window.location.href = 'login.html';
-    }
-
-    // Utility functions
-    showLoading() {
-        document.getElementById('loadingSpinner')?.classList.add('show');
-    }
-
-    hideLoading() {
-        document.getElementById('loadingSpinner')?.classList.remove('show');
+        // Implement search functionality here
     }
 
     showNotification(message, type = 'info') {
-        // Create notification element
+        // Create a simple notification
         const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.setAttribute('role', 'alert');
-        notification.innerHTML = `
-            <span>${message}</span>
-            <button class="close-notification" aria-label="إغلاق الإشعار">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-
-        // Add styles
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: ${type === 'error' ? 'var(--error-color)' : 
-                        type === 'success' ? 'var(--success-color)' : 'var(--primary-color)'};
+            background: ${type === 'success' ? '#4CAF50' : '#eab3c6'};
             color: white;
-            padding: var(--space-md) var(--space-lg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             z-index: 3000;
             display: flex;
             align-items: center;
-            gap: var(--space-md);
+            gap: 0.5rem;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check' : 'info'}"></i>
+            <span>${message}</span>
         `;
 
         document.body.appendChild(notification);
 
-        // Auto remove after 5 seconds
         setTimeout(() => {
             notification.remove();
-        }, 5000);
-
-        // Close button
-        notification.querySelector('.close-notification').addEventListener('click', () => {
-            notification.remove();
-        });
+        }, 3000);
     }
 
-    // Initialize from localStorage
     loadPreferences() {
         const savedTheme = localStorage.getItem('nona-theme');
         const savedLanguage = localStorage.getItem('nona-language');
@@ -415,35 +392,27 @@ class NonaBeautyApp {
         if (savedTheme) {
             this.currentTheme = savedTheme;
             document.body.setAttribute('data-theme', savedTheme);
+            const themeIcon = document.querySelector('#themeToggle i');
+            if (themeIcon) {
+                themeIcon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
         }
         
         if (savedLanguage) {
             this.currentLanguage = savedLanguage;
             document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = savedLanguage;
-            document.getElementById('langToggle').textContent = 
-                savedLanguage === 'ar' ? 'EN' : 'AR';
+            const langToggle = document.getElementById('langToggle');
+            if (langToggle) {
+                langToggle.textContent = savedLanguage === 'ar' ? 'EN' : 'AR';
+            }
         }
         
         this.loadCart();
     }
 }
 
-// Initialize the app when DOM is loaded
+// Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     window.nonaApp = new NonaBeautyApp();
-    window.nonaApp.loadPreferences();
 });
-
-// Service Worker for PWA functionality (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
