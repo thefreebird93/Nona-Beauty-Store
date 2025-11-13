@@ -1,110 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Products - Nona Beauty</title>
-  <link rel="icon" href="assets/images/favicon.png">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنتجات - Nona Beauty</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body data-theme="light">
-  <header class="header">
-    <div class="header-container">
-      <div class="logo">
-        <i class="fas fa-spa"></i>
-        Nona Beauty
-      </div>
-      
-      <div class="search-bar">
-        <input type="text" placeholder="Search products..." id="searchInput">
-        <button class="search-btn"><i class="fas fa-search"></i></button>
-      </div>
-      
-      <nav class="nav" id="mainNav">
-        <a href="index.html" class="nav-link">
-          <i class="fas fa-home"></i>
-          <span>Home</span>
-        </a>
-        <a href="products.html" class="nav-link active">
-          <i class="fas fa-shopping-bag"></i>
-          <span>Products</span>
-        </a>
-        <a href="offers.html" class="nav-link">
-          <i class="fas fa-tag"></i>
-          <span>Offers</span>
-        </a>
-        <a href="tips.html" class="nav-link">
-          <i class="fas fa-heart"></i>
-          <span>Medical Tips</span>
-        </a>
-        
-        <div class="controls" id="topControls">
-          <button class="btn cart-btn" id="cartBtn" aria-label="Shopping Cart">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count">0</span>
-          </button>
-          <button class="btn" id="themeToggle" aria-label="Toggle theme">
-            <i class="fas fa-moon"></i>
-          </button>
-          <button class="btn" id="langToggle" aria-label="Toggle language">AR</button>
-          <button class="btn primary" id="loginBtn" aria-label="Login">Login</button>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-spa"></i>
+                    <span>Nona Beauty</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">الرئيسية</a>
+                    <a href="products.html" class="nav-link active">المنتجات</a>
+                    <a href="about.html" class="nav-link">من نحن</a>
+                </nav>
+            </div>
         </div>
-      </nav>
-      
-      <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-  </header>
+    </header>
 
-  <main class="section">
-    <div class="section-header">
-      <h2>All Products</h2>
-      <p>Discover our complete collection of premium beauty products</p>
-    </div>
-    
-    <div class="filters-container">
-      <div class="filter-group">
-        <label>Category:</label>
-        <select id="categoryFilter">
-          <option value="">All Categories</option>
-        </select>
-      </div>
-      
-      <div class="filter-group">
-        <label>
-          <input type="checkbox" id="onlyDiscounts">
-          Show Only Discounted
-        </label>
-      </div>
-      
-      <div class="filter-group">
-        <label>Sort By:</label>
-        <select id="sortFilter">
-          <option value="name">Name A-Z</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-          <option value="discount">Biggest Discount</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="results-info" id="resultsInfo"></div>
-    
-    <div id="productsGrid" class="grid"></div>
-    
-    <div class="load-more-container">
-      <button class="btn outline" id="loadMoreBtn">
-        <i class="fas fa-plus"></i> Load More Products
-      </button>
-    </div>
-  </main>
+    <main class="section">
+        <div class="container">
+            <h1>المنتجات</h1>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </main>
 
-  <script src="assets/js/main_v4.js"></script>
-  <script src="assets/js/auth_v4.js"></script>
-  <script src="assets/js/cart_v1.js"></script>
-  <script src="assets/js/products_v1.js"></script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
