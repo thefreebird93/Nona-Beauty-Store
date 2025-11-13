@@ -1,228 +1,255 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nona Beauty - Premium Cosmetics & Skincare</title>
-<meta name="description" content="Nona Beauty - premium cosmetics, offers and medical tips. Discover your beauty with our exclusive products.">
-<link rel="icon" href="assets/images/favicon.png" type="image/png">
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nona Beauty - مستحضرات تجميل وعناية بالبشرة</title>
+    <meta name="description" content="Nona Beauty - مستحضرات تجميل وعناية بالبشرة عالية الجودة. اكتشف جمالك مع منتجاتنا الحصرية">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body data-theme="light">
-<header class="header">
-  <div class="header-container">
-    <div class="logo">
-      <i class="fas fa-spa"></i>
-      Nona Beauty
-    </div>
-    
-    <div class="search-bar">
-      <input type="text" placeholder="Search products..." id="searchInput">
-      <button class="search-btn"><i class="fas fa-search"></i></button>
-    </div>
-    
-    <nav class="nav" id="mainNav">
-      <a href="index.html" class="nav-link active">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </a>
-      <a href="products.html" class="nav-link">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-      </a>
-      <a href="offers.html" class="nav-link">
-        <i class="fas fa-tag"></i>
-        <span>Offers</span>
-      </a>
-      <a href="tips.html" class="nav-link">
-        <i class="fas fa-heart"></i>
-        <span>Medical Tips</span>
-      </a>
-      
-      <div class="controls" id="topControls">
-        <button class="btn cart-btn" id="cartBtn" aria-label="Shopping Cart">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-count">0</span>
-        </button>
-        <button class="btn" id="themeToggle" aria-label="Toggle theme">
-          <i class="fas fa-moon"></i>
-        </button>
-        <button class="btn" id="langToggle" aria-label="Toggle language">AR</button>
-        <button class="btn primary" id="loginBtn" aria-label="Login">Login</button>
-      </div>
-    </nav>
-    
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-      <i class="fas fa-bars"></i>
-    </button>
-  </div>
-</header>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="assets/images/logo.png" alt="Nona Beauty" width="40" height="40">
+                    <span>Nona Beauty</span>
+                </div>
 
-<div class="scroll-indicator" id="scrollIndicator">
-  <div class="scroll-dot active" data-section="hero"></div>
-  <div class="scroll-dot" data-section="products"></div>
-  <div class="scroll-dot" data-section="offers"></div>
-</div>
+                <!-- Search Bar -->
+                <div class="search-bar" role="search">
+                    <input type="text" placeholder="ابحث عن المنتجات..." id="searchInput" aria-label="بحث عن المنتجات">
+                    <button class="search-btn" aria-label="بحث">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
 
-<main>
-  <section class="hero" id="heroSection">
-    <div class="slider-container">
-      <div class="slider card" id="slider">
-        <!-- slides injected by JS -->
-      </div>
-      <div class="slider-controls">
-        <button class="slider-arrow prev" id="prevSlide">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button class="slider-arrow next" id="nextSlide">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-    
-    <aside class="sidebar-cards">
-      <div class="card featured-card" id="offersPreview">
-        <div class="card-header">
-          <i class="fas fa-fire"></i>
-          <h3>Hot Offers</h3>
+                <!-- Navigation -->
+                <nav class="nav" id="mainNav" role="navigation" aria-label="القائمة الرئيسية">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link active" aria-current="page">
+                            <i class="fas fa-home"></i>
+                            <span>الرئيسية</span>
+                        </a></li>
+                        <li><a href="products.html" class="nav-link">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>المنتجات</span>
+                        </a></li>
+                        <li><a href="offers.html" class="nav-link">
+                            <i class="fas fa-tag"></i>
+                            <span>العروض</span>
+                        </a></li>
+                        <li><a href="tips.html" class="nav-link">
+                            <i class="fas fa-heart"></i>
+                            <span>نصائح طبية</span>
+                        </a></li>
+                        <li><a href="about.html" class="nav-link">
+                            <i class="fas fa-info-circle"></i>
+                            <span>من نحن</span>
+                        </a></li>
+                    </ul>
+
+                    <!-- Controls -->
+                    <div class="controls" id="topControls">
+                        <button class="btn cart-btn" id="cartBtn" aria-label="عربة التسوق">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" aria-live="polite">0</span>
+                        </button>
+                        <button class="btn theme-toggle" id="themeToggle" aria-label="تبديل السمة">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="btn lang-toggle" id="langToggle" aria-label="تبديل اللغة">EN</button>
+                        <button class="btn primary login-btn" id="loginBtn" aria-label="تسجيل الدخول">تسجيل الدخول</button>
+                    </div>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
-        <div id="offersPreviewList"></div>
-        <a href="offers.html" class="btn primary full-width">
-          View All Offers <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-      
-      <div class="card featured-card" id="tipsPreview">
-        <div class="card-header">
-          <i class="fas fa-lightbulb"></i>
-          <h3>Beauty Tips</h3>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main">
+        <!-- Hero Section -->
+        <section class="hero" id="heroSection" aria-labelledby="heroTitle">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 id="heroTitle">اكتشف جمالك الحقيقي</h1>
+                    <p class="hero-description">منتجات تجميل وعناية بالبشرة عالية الجودة مصممة خصيصًا لك</p>
+                    <div class="hero-actions">
+                        <a href="products.html" class="btn primary large">تسوق الآن</a>
+                        <a href="about.html" class="btn secondary large">تعرف علينا</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="assets/images/banners/hero.jpg" alt="منتجات Nona Beauty" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="featured-products section" aria-labelledby="featuredProductsTitle">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="featuredProductsTitle">المنتجات المميزة</h2>
+                    <p>اكتشف مجموعتنا المختارة بعناية من أفضل المنتجات</p>
+                </div>
+                <div class="products-grid" id="featuredProductsGrid" role="list">
+                    <!-- Products will be loaded by JavaScript -->
+                </div>
+                <div class="section-footer">
+                    <a href="products.html" class="btn primary">عرض جميع المنتجات</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Special Offers -->
+        <section class="offers-section section" aria-labelledby="offersTitle">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="offersTitle">عروض خاصة</h2>
+                    <p>استفد من عروضنا الحصرية ووفر أكثر</p>
+                </div>
+                <div class="offers-grid" id="offersGrid" role="list">
+                    <!-- Offers will be loaded by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features-section section" aria-labelledby="featuresTitle">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card" role="listitem">
+                        <i class="fas fa-shipping-fast" aria-hidden="true"></i>
+                        <h3>شحن مجاني</h3>
+                        <p>لطلبات فوق 100 دولار</p>
+                    </div>
+                    <div class="feature-card" role="listitem">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <h3>ضمان الجودة</h3>
+                        <p>سياسة إرجاع 30 يوم</p>
+                    </div>
+                    <div class="feature-card" role="listitem">
+                        <i class="fas fa-headset" aria-hidden="true"></i>
+                        <h3>دعم 24/7</h3>
+                        <p>نصائح تجميل من الخبراء</p>
+                    </div>
+                    <div class="feature-card" role="listitem">
+                        <i class="fas fa-gem" aria-hidden="true"></i>
+                        <h3>جودة ممتازة</h3>
+                        <p>اختبار أطباء الجلدية</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/logo.png" alt="Nona Beauty" width="40" height="40">
+                        <span>Nona Beauty</span>
+                    </div>
+                    <p>شريكك الموثوق في التجميل والعناية بالبشرة. نقدم منتجات عالية الجودة مع إرشادات الخبراء.</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/dr_nahlaalaa" aria-label="إنستجرام" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.facebook.com/share/19gejDdJHE/" aria-label="فيسبوك" target="_blank">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@nona.beauty7" aria-label="تيك توك" target="_blank">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://chat.whatsapp.com/Evn00no5Pl11l2URJZh2Un" aria-label="واتساب" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>روابط سريعة</h3>
+                    <ul>
+                        <li><a href="index.html">الرئيسية</a></li>
+                        <li><a href="products.html">المنتجات</a></li>
+                        <li><a href="offers.html">العروض</a></li>
+                        <li><a href="tips.html">نصائح التجميل</a></li>
+                        <li><a href="about.html">من نحن</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>خدمة العملاء</h3>
+                    <ul>
+                        <li><a href="contact.html">اتصل بنا</a></li>
+                        <li><a href="shipping.html">معلومات الشحن</a></li>
+                        <li><a href="returns.html">الإرجاع</a></li>
+                        <li><a href="faq.html">الأسئلة الشائعة</a></li>
+                        <li><a href="privacy.html">سياسة الخصوصية</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>النشرة البريدية</h3>
+                    <p>اشترك للحصول على عروض حصرية ونصائح تجميل</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="بريدك الإلكتروني" required aria-label="البريد الإلكتروني">
+                        <button type="submit" class="btn primary">اشتراك</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2024 Nona Beauty. جميع الحقوق محفوظة.</p>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa" aria-label="فيزا"></i>
+                        <i class="fab fa-cc-mastercard" aria-label="ماستركارد"></i>
+                        <i class="fab fa-cc-paypal" aria-label="باي بال"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="tipsPreviewList"></div>
-        <a href="tips.html" class="btn outline full-width">
-          View All Tips <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-    </aside>
-  </section>
+    </footer>
 
-  <section class="section" id="productsSection">
-    <div class="section-header">
-      <h2>Featured Products</h2>
-      <p>Discover our carefully curated collection of premium beauty products</p>
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar" role="dialog" aria-labelledby="cartTitle" aria-hidden="true">
+        <div class="cart-header">
+            <h3 id="cartTitle">عربة التسوق</h3>
+            <button class="close-cart" id="closeCart" aria-label="إغلاق عربة التسوق">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems" role="list">
+            <!-- Cart items will be injected here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>المجموع: $<span id="cartTotal">0.00</span></strong>
+            </div>
+            <button class="btn primary full-width">إتمام الشراء</button>
+        </div>
     </div>
-    <div id="productsGrid" class="grid"></div>
-    <div class="section-footer">
-      <a href="products.html" class="btn primary">
-        View All Products <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-  </section>
 
-  <section class="section highlight-section">
-    <div class="highlight-grid">
-      <div class="highlight-card">
-        <i class="fas fa-shipping-fast"></i>
-        <h4>Free Shipping</h4>
-        <p>On orders over $100</p>
-      </div>
-      <div class="highlight-card">
-        <i class="fas fa-shield-alt"></i>
-        <h4>Quality Guarantee</h4>
-        <p>30-day return policy</p>
-      </div>
-      <div class="highlight-card">
-        <i class="fas fa-headset"></i>
-        <h4>24/7 Support</h4>
-        <p>Expert beauty advice</p>
-      </div>
-      <div class="highlight-card">
-        <i class="fas fa-gem"></i>
-        <h4>Premium Quality</h4>
-        <p>Dermatologist tested</p>
-      </div>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner" aria-hidden="true">
+        <div class="spinner"></div>
     </div>
-  </section>
-</main>
 
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-section">
-      <div class="footer-logo">
-        <i class="fas fa-spa"></i>
-        Nona Beauty
-      </div>
-      <p>Your trusted partner in beauty and skincare. We offer premium quality products with expert guidance.</p>
-      <div class="social-links">
-        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-      </div>
-    </div>
-    
-    <div class="footer-section">
-      <h4>Quick Links</h4>
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="offers.html">Offers</a>
-      <a href="tips.html">Beauty Tips</a>
-      <a href="about.html">About Us</a>
-    </div>
-    
-    <div class="footer-section">
-      <h4>Customer Care</h4>
-      <a href="contact.html">Contact Us</a>
-      <a href="shipping.html">Shipping Info</a>
-      <a href="returns.html">Returns</a>
-      <a href="faq.html">FAQ</a>
-      <a href="privacy.html">Privacy Policy</a>
-    </div>
-    
-    <div class="footer-section">
-      <h4>Newsletter</h4>
-      <p>Subscribe for exclusive offers and beauty tips</p>
-      <div class="newsletter-form">
-        <input type="email" placeholder="Your email address">
-        <button class="btn primary">Subscribe</button>
-      </div>
-    </div>
-  </div>
-  
-  <div class="footer-bottom">
-    <div class="footer-bottom-content">
-      <div>&copy; 2024 Nona Beauty. All rights reserved.</div>
-      <div class="payment-methods">
-        <i class="fab fa-cc-visa"></i>
-        <i class="fab fa-cc-mastercard"></i>
-        <i class="fab fa-cc-paypal"></i>
-        <i class="fab fa-cc-apple-pay"></i>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- Cart Sidebar -->
-<div class="cart-sidebar" id="cartSidebar">
-  <div class="cart-header">
-    <h3>Your Cart</h3>
-    <button class="close-cart" id="closeCart">
-      <i class="fas fa-times"></i>
-    </button>
-  </div>
-  <div class="cart-items" id="cartItems">
-    <!-- Cart items will be injected here -->
-  </div>
-  <div class="cart-footer">
-    <div class="cart-total">
-      <strong>Total: $<span id="cartTotal">0.00</span></strong>
-    </div>
-    <button class="btn primary full-width">Checkout</button>
-  </div>
-</div>
-
-<script src="assets/js/main_v4.js"></script>
-<script src="assets/js/auth_v4.js"></script>
-<script src="assets/js/cart_v1.js"></script>
+    <!-- Scripts -->
+    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/auth.js" defer></script>
+    <script src="assets/js/cart.js" defer></script>
 </body>
 </html>
