@@ -1,732 +1,449 @@
-// main_v4.js - enhanced version with animations, search, and improved UX
-const DATA_PATH = 'assets/data/';
-let currentProducts = [];
-let currentTips = [];
-
-async function fetchJSON(path) {
-  try {
-    const response = await fetch(path);
-    if (!response.ok) throw new Error('Network response was not ok');
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching JSON:', error);
-    return [];
-  }
-}
-
-async function initSite() {
-  await loadInitialData();
-  renderSlider();
-  renderProducts(currentProducts.slice(0, 8)); // Show only 8 featured products
-  renderOffersPreview(currentProducts);
-  renderTipsPreview(currentTips);
-  populateFilters(currentProducts);
-  bindTopControls();
-  bindSearch();
-  bindMobileMenu();
-  addScrollAnimations();
-  initScrollIndicator();
-  checkAuthUI();
-  
-  // Preload images for better performance
-  preloadImages();
-}
-
-async function loadInitialData() {
-  try {
-    const [products, tips] = await Promise.all([
-      fetchJSON(DATA_PATH + 'products.json'),
-      fetchJSON(DATA_PATH + 'tips.json')
-    ]);
-    
-    currentProducts = products;
-    currentTips = tips;
-    
-    // Cache data in localStorage for offline use
-    localStorage.setItem('nb_products_cache', JSON.stringify(products));
-    localStorage.setItem('nb_tips_cache', JSON.stringify(tips));
-  } catch (error) {
-    // Fallback to cached data
-    console.log('Using cached data');
-    currentProducts = JSON.parse(localStorage.getItem('nb_products_cache') || '[]');
-    currentTips = JSON.parse(localStorage.getItem('nb_tips_cache') || '[]');
-  }
-}
-
-function renderSlider() {
-  const container = document.getElementById('slider');
-  if (!container) return;
-
-  const slides = [
-    {
-      image: 'assets/images/slider1.jpg',
-      title: 'Premium Beauty Products',
-      description: 'Discover our exclusive collection of luxury cosmetics',
-      buttonText: 'Shop Now',
-      buttonLink: 'products.html'
-    },
-    {
-      image: 'assets/images/slider2.jpg',
-      title: 'Special Offers',
-      description: 'Up to 50% off on selected items - Limited time!',
-      buttonText: 'View Offers',
-      buttonLink: 'offers.html'
-    },
-    {
-      image: 'assets/images/slider3.jpg',
-      title: 'New Arrivals',
-      description: 'Check out our latest products and innovations',
-      buttonText: 'Explore',
-      buttonLink: 'products.html?new=true'
+// Nona Beauty - Main JavaScript File (Unified)
+class NonaBeautyApp {
+    constructor() {
+        this.currentLanguage = 'ar';
+        this.currentTheme = 'light';
+        this.cart = [];
+        this.products = [];
+        this.init();
     }
-  ];
 
-  container.innerHTML = '';
-  let currentSlide = 0;
-
-  slides.forEach((slide, index) => {
-    const slideEl = document.createElement('div');
-    slideEl.className = `slide ${index === 0 ? 'active' : ''}`;
-    slideEl.innerHTML = `
-      <img src="${slide.image}" alt="${slide.title}" loading="lazy">
-      <div class="slide-content">
-        <h2>${slide.title}</h2>
-        <p>${slide.description}</p>
-        <button class="slider-btn" onclick="window.location.href='${slide.buttonLink}'">
-          ${slide.buttonText} <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
-    `;
-    container.appendChild(slideEl);
-  });
-
-  // Add indicators
-  const indicators = document.createElement('div');
-  indicators.className = 'slider-indicators';
-  slides.forEach((_, index) => {
-    const indicator = document.createElement('button');
-    indicator.className = `slider-indicator ${index === 0 ? 'active' : ''}`;
-    indicator.addEventListener('click', () => showSlide(index));
-    indicators.appendChild(indicator);
-  });
-  container.appendChild(indicators);
-
-  // Auto slide
-  let slideInterval = setInterval(nextSlide, 5000);
-
-  // Pause on hover
-  container.addEventListener('mouseenter', () => clearInterval(slideInterval));
-  container.addEventListener('mouseleave', () => {
-    slideInterval = setInterval(nextSlide, 5000);
-  });
-
-  // Navigation arrows
-  document.getElementById('prevSlide')?.addEventListener('click', prevSlide);
-  document.getElementById('nextSlide')?.addEventListener('click', nextSlide);
-
-  function showSlide(index) {
-    const slides = container.querySelectorAll('.slide');
-    const indicators = container.querySelectorAll('.slider-indicator');
-    
-    slides.forEach(slide => slide.classList.remove('active'));
-    indicators.forEach(indicator => indicator.classList.remove('active'));
-    
-    slides[index].classList.add('active');
-    indicators[index].classList.add('active');
-    currentSlide = index;
-  }
-
-  function nextSlide() {
-    const next = (currentSlide + 1) % slides.length;
-    showSlide(next);
-  }
-
-  function prevSlide() {
-    const prev = (currentSlide - 1 + slides.length) % slides.length;
-    showSlide(prev);
-  }
-
-  window.nextSlide = nextSlide;
-  window.prevSlide = prevSlide;
-  window.showSlide = showSlide;
-}
-
-function createProductEl(product) {
-  const productEl = document.createElement('div');
-  productEl.className = 'product-card card';
-  productEl.setAttribute('data-category', product.category);
-  productEl.setAttribute('data-id', product.id);
-
-  let discountBadge = '';
-  if (product.discount && product.discount > 0) {
-    discountBadge = `<div class="discount-badge">${product.discount}% OFF</div>`;
-  }
-
-  const ratingStars = generateStarRating(product.rating);
-
-  productEl.innerHTML = `
-    ${discountBadge}
-    <img src="${product.image}" alt="${product.title_en}" loading="lazy" 
-         onload="this.classList.add('loaded')">
-    <h4>${product.title_en}</h4>
-    <div class="rating">
-      ${ratingStars}
-      <span>(${product.ratings_count})</span>
-    </div>
-    <div class="price">
-      $${product.price.toFixed(2)}
-      ${product.old_price && product.old_price > 0 ? 
-        `<span class="old">$${product.old_price.toFixed(2)}</span>` : ''}
-    </div>
-    <div class="product-actions">
-      <button class="btn outline add-to-cart" data-product-id="${product.id}">
-        <i class="fas fa-cart-plus"></i> Add to Cart
-      </button>
-      <button class="btn quick-view" data-product-id="${product.id}">
-        <i class="fas fa-eye"></i>
-      </button>
-    </div>
-  `;
-
-  // Add event listeners
-  const addToCartBtn = productEl.querySelector('.add-to-cart');
-  const quickViewBtn = productEl.querySelector('.quick-view');
-
-  addToCartBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    addToCart(product);
-  });
-
-  quickViewBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    showQuickView(product);
-  });
-
-  productEl.addEventListener('click', () => {
-    showProductDetails(product);
-  });
-
-  return productEl;
-}
-
-function generateStarRating(rating) {
-  const fullStars = Math.floor(rating);
-  const halfStar = rating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-  let stars = '';
-  
-  // Full stars
-  for (let i = 0; i < fullStars; i++) {
-    stars += '<i class="fas fa-star"></i>';
-  }
-  
-  // Half star
-  if (halfStar) {
-    stars += '<i class="fas fa-star-half-alt"></i>';
-  }
-  
-  // Empty stars
-  for (let i = 0; i < emptyStars; i++) {
-    stars += '<i class="far fa-star"></i>';
-  }
-  
-  return stars;
-}
-
-function renderProducts(products) {
-  const grid = document.getElementById('productsGrid');
-  if (!grid) return;
-
-  grid.innerHTML = '';
-  
-  if (products.length === 0) {
-    grid.innerHTML = `
-      <div class="no-products" style="grid-column:1/-1;text-align:center;padding:40px;">
-        <i class="fas fa-search" style="font-size:3em;color:var(--muted);margin-bottom:20px;"></i>
-        <h3>No products found</h3>
-        <p>Try adjusting your search or filters</p>
-      </div>
-    `;
-    return;
-  }
-
-  products.forEach(product => {
-    const productEl = createProductEl(product);
-    grid.appendChild(productEl);
-  });
-}
-
-function renderOffersPreview(products) {
-  const offers = products.filter(p => p.discount && p.discount > 0).slice(0, 3);
-  const list = document.getElementById('offersPreviewList');
-  if (!list) return;
-
-  list.innerHTML = '';
-
-  if (offers.length === 0) {
-    list.innerHTML = '<p style="color:var(--muted);text-align:center;">No current offers</p>';
-    return;
-  }
-
-  offers.forEach(offer => {
-    const offerEl = document.createElement('div');
-    offerEl.className = 'offer-item';
-    offerEl.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--bg);
-      border-radius: 8px;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    `;
-    
-    offerEl.innerHTML = `
-      <img src="${offer.image}" alt="${offer.title_en}" 
-           style="width:50px;height:50px;object-fit:cover;border-radius:6px;">
-      <div style="flex:1;">
-        <strong style="display:block;font-size:0.9em;">${offer.title_en}</strong>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-          <span style="color:var(--accent);font-weight:600;">$${offer.price}</span>
-          <span style="color:var(--muted);text-decoration:line-through;font-size:0.8em;">
-            $${offer.old_price}
-          </span>
-          <span style="background:#ff6b6b;color:white;padding:2px 6px;border-radius:4px;font-size:0.7em;font-weight:600;">
-            -${offer.discount}%
-          </span>
-        </div>
-      </div>
-    `;
-
-    offerEl.addEventListener('click', () => {
-      showProductDetails(offer);
-    });
-
-    offerEl.addEventListener('mouseenter', () => {
-      offerEl.style.transform = 'translateX(5px)';
-      offerEl.style.background = 'var(--accent-2)';
-    });
-
-    offerEl.addEventListener('mouseleave', () => {
-      offerEl.style.transform = 'translateX(0)';
-      offerEl.style.background = 'var(--bg)';
-    });
-
-    list.appendChild(offerEl);
-  });
-}
-
-function renderTipsPreview(tips) {
-  const list = document.getElementById('tipsPreviewList');
-  if (!list) return;
-
-  list.innerHTML = '';
-
-  tips.slice(0, 3).forEach(tip => {
-    const tipEl = document.createElement('div');
-    tipEl.className = 'tip-item';
-    tipEl.style.cssText = `
-      padding: 15px;
-      background: var(--bg);
-      border-radius: 8px;
-      margin-bottom: 12px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border-left: 3px solid var(--accent);
-    `;
-    
-    tipEl.innerHTML = `
-      <strong style="display:block;margin-bottom:8px;">${tip.title_en}</strong>
-      <p style="margin:0;color:var(--muted);font-size:0.9em;line-height:1.4;">
-        ${tip.content_en.substring(0, 80)}...
-      </p>
-    `;
-
-    tipEl.addEventListener('click', () => {
-      showTipDetails(tip);
-    });
-
-    tipEl.addEventListener('mouseenter', () => {
-      tipEl.style.transform = 'translateX(5px)';
-      tipEl.style.background = 'var(--accent-2)';
-    });
-
-    tipEl.addEventListener('mouseleave', () => {
-      tipEl.style.transform = 'translateX(0)';
-      tipEl.style.background = 'var(--bg)';
-    });
-
-    list.appendChild(tipEl);
-  });
-}
-
-function populateFilters(products) {
-  const categoryFilter = document.getElementById('categoryFilter');
-  if (!categoryFilter) return;
-
-  const categories = Array.from(new Set(products.map(p => p.category))).sort();
-  
-  categories.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = category;
-    categoryFilter.appendChild(option);
-  });
-
-  categoryFilter.addEventListener('change', applyFilters);
-  
-  const onlyDiscounts = document.getElementById('onlyDiscounts');
-  if (onlyDiscounts) {
-    onlyDiscounts.addEventListener('change', applyFilters);
-  }
-}
-
-function applyFilters() {
-  const category = document.getElementById('categoryFilter')?.value || '';
-  const onlyDiscounts = document.getElementById('onlyDiscounts')?.checked || false;
-  const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-
-  let filteredProducts = currentProducts;
-
-  // Apply category filter
-  if (category) {
-    filteredProducts = filteredProducts.filter(p => p.category === category);
-  }
-
-  // Apply discount filter
-  if (onlyDiscounts) {
-    filteredProducts = filteredProducts.filter(p => p.discount && p.discount > 0);
-  }
-
-  // Apply search filter
-  if (searchTerm) {
-    filteredProducts = filteredProducts.filter(p => 
-      p.title_en.toLowerCase().includes(searchTerm) ||
-      p.category.toLowerCase().includes(searchTerm) ||
-      (p.description && p.description.toLowerCase().includes(searchTerm))
-    );
-  }
-
-  renderProducts(filteredProducts);
-}
-
-function bindSearch() {
-  const searchInput = document.getElementById('searchInput');
-  if (!searchInput) return;
-
-  let searchTimeout;
-  
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      applyFilters();
-    }, 300);
-  });
-
-  // Add search button functionality
-  const searchBtn = document.querySelector('.search-btn');
-  if (searchBtn) {
-    searchBtn.addEventListener('click', () => {
-      applyFilters();
-    });
-  }
-
-  // Allow Enter key to search
-  searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      applyFilters();
+    init() {
+        this.setupEventListeners();
+        this.loadProducts();
+        this.updateCartCount();
+        this.setupAccessibility();
     }
-  });
-}
 
-function bindMobileMenu() {
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const nav = document.getElementById('mainNav');
-
-  if (mobileMenuBtn && nav) {
-    mobileMenuBtn.addEventListener('click', () => {
-      nav.classList.toggle('mobile-open');
-      mobileMenuBtn.innerHTML = nav.classList.contains('mobile-open') ? 
-        '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-    });
-
-    // Close mobile menu when clicking on a link
-    nav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        nav.classList.remove('mobile-open');
-        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-      });
-    });
-  }
-}
-
-function addScrollAnimations() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { 
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  });
-
-  // Observe product cards and other elements
-  document.querySelectorAll('.product-card, .featured-card, .highlight-card').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    observer.observe(el);
-  });
-}
-
-function initScrollIndicator() {
-  const indicator = document.getElementById('scrollIndicator');
-  if (!indicator) return;
-
-  const sections = ['hero', 'products', 'offers'];
-  
-  // Create dots for each section
-  indicator.innerHTML = '';
-  sections.forEach(section => {
-    const dot = document.createElement('div');
-    dot.className = 'scroll-dot';
-    dot.setAttribute('data-section', section);
-    dot.addEventListener('click', () => {
-      scrollToSection(section);
-    });
-    indicator.appendChild(dot);
-  });
-
-  // Update active dot on scroll
-  window.addEventListener('scroll', () => {
-    const scrollPos = window.scrollY + 100;
-    
-    sections.forEach((section, index) => {
-      const sectionEl = document.getElementById(section + 'Section');
-      const dot = indicator.children[index];
-      
-      if (sectionEl) {
-        const sectionTop = sectionEl.offsetTop;
-        const sectionBottom = sectionTop + sectionEl.offsetHeight;
+    // Setup event listeners
+    setupEventListeners() {
+        // Theme toggle
+        document.getElementById('themeToggle')?.addEventListener('click', () => this.toggleTheme());
         
-        if (scrollPos >= sectionTop && scrollPos < sectionBottom) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
+        // Language toggle
+        document.getElementById('langToggle')?.addEventListener('click', () => this.toggleLanguage());
+        
+        // Mobile menu
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', () => this.toggleMobileMenu());
+        
+        // Cart functionality
+        document.getElementById('cartBtn')?.addEventListener('click', () => this.openCart());
+        document.getElementById('closeCart')?.addEventListener('click', () => this.closeCart());
+        
+        // Search functionality
+        document.getElementById('searchInput')?.addEventListener('input', (e) => this.handleSearch(e));
+        
+        // Login button
+        document.getElementById('loginBtn')?.addEventListener('click', () => this.handleLogin());
+    }
+
+    // Setup accessibility features
+    setupAccessibility() {
+        // Add skip link
+        this.addSkipLink();
+        
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => this.handleKeyboardNavigation(e));
+        
+        // Add ARIA labels where needed
+        this.enhanceAccessibility();
+    }
+
+    addSkipLink() {
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main-content';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'انتقل إلى المحتوى الرئيسي';
+        document.body.prepend(skipLink);
+    }
+
+    handleKeyboardNavigation(e) {
+        // Close cart on Escape key
+        if (e.key === 'Escape') {
+            this.closeCart();
+            this.closeMobileMenu();
         }
-      }
+        
+        // Trap focus in cart when open
+        if (e.key === 'Tab' && document.getElementById('cartSidebar')?.classList.contains('open')) {
+            this.trapFocusInCart(e);
+        }
+    }
+
+    trapFocusInCart(e) {
+        const cart = document.getElementById('cartSidebar');
+        const focusableElements = cart.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+        }
+    }
+
+    enhanceAccessibility() {
+        // Add ARIA labels to icons
+        document.querySelectorAll('.fas, .fab').forEach(icon => {
+            if (!icon.getAttribute('aria-label')) {
+                const parent = icon.closest('button, a');
+                if (parent && parent.textContent.trim()) {
+                    icon.setAttribute('aria-hidden', 'true');
+                }
+            }
+        });
+    }
+
+    // Theme management
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', this.currentTheme);
+        document.getElementById('themeToggle').querySelector('i').className = 
+            this.currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        
+        // Save preference
+        localStorage.setItem('nona-theme', this.currentTheme);
+    }
+
+    // Language management
+    toggleLanguage() {
+        this.currentLanguage = this.currentLanguage === 'ar' ? 'en' : 'ar';
+        document.getElementById('langToggle').textContent = 
+            this.currentLanguage === 'ar' ? 'EN' : 'AR';
+        
+        // Update page direction
+        document.documentElement.dir = this.currentLanguage === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = this.currentLanguage;
+        
+        // Save preference
+        localStorage.setItem('nona-language', this.currentLanguage);
+        
+        // Reload content
+        this.updateContentLanguage();
+    }
+
+    updateContentLanguage() {
+        // This would typically make API calls to get translated content
+        console.log('Updating content for language:', this.currentLanguage);
+    }
+
+    // Mobile menu
+    toggleMobileMenu() {
+        const nav = document.getElementById('mainNav');
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+        
+        nav.classList.toggle('mobile-open');
+        menuBtn.setAttribute('aria-expanded', !isExpanded);
+        menuBtn.querySelector('i').className = isExpanded ? 'fas fa-bars' : 'fas fa-times';
+    }
+
+    closeMobileMenu() {
+        const nav = document.getElementById('mainNav');
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        
+        nav.classList.remove('mobile-open');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        menuBtn.querySelector('i').className = 'fas fa-bars';
+    }
+
+    // Cart functionality
+    openCart() {
+        document.getElementById('cartSidebar').classList.add('open');
+        document.getElementById('cartSidebar').setAttribute('aria-hidden', 'false');
+        
+        // Trap focus in cart
+        const firstFocusable = document.getElementById('cartSidebar').querySelector('button, [href], input');
+        firstFocusable?.focus();
+    }
+
+    closeCart() {
+        document.getElementById('cartSidebar').classList.remove('open');
+        document.getElementById('cartSidebar').setAttribute('aria-hidden', 'true');
+    }
+
+    addToCart(product, quantity = 1) {
+        const existingItem = this.cart.find(item => item.id === product.id);
+        
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            this.cart.push({
+                ...product,
+                quantity: quantity
+            });
+        }
+        
+        this.updateCartCount();
+        this.saveCart();
+        this.showNotification('تم إضافة المنتج إلى عربة التسوق', 'success');
+    }
+
+    removeFromCart(productId) {
+        this.cart = this.cart.filter(item => item.id !== productId);
+        this.updateCartCount();
+        this.saveCart();
+        this.renderCartItems();
+    }
+
+    updateCartCount() {
+        const count = this.cart.reduce((total, item) => total + item.quantity, 0);
+        const countElement = document.querySelector('.cart-count');
+        if (countElement) {
+            countElement.textContent = count;
+            countElement.setAttribute('aria-label', `${count} عناصر في عربة التسوق`);
+        }
+    }
+
+    renderCartItems() {
+        const cartItems = document.getElementById('cartItems');
+        if (!cartItems) return;
+
+        if (this.cart.length === 0) {
+            cartItems.innerHTML = '<p class="empty-cart">عربة التسوق فارغة</p>';
+            return;
+        }
+
+        cartItems.innerHTML = this.cart.map(item => `
+            <div class="cart-item" role="listitem">
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <div class="cart-item-details">
+                    <h4>${item.title}</h4>
+                    <div class="cart-item-price">$${item.price}</div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn decrease" aria-label="تقليل الكمية" data-id="${item.id}">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn increase" aria-label="زيادة الكمية" data-id="${item.id}">+</button>
+                        <button class="btn remove-btn" aria-label="إزالة المنتج" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        // Add event listeners for quantity buttons
+        cartItems.querySelectorAll('.decrease').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                this.updateQuantity(id, -1);
+            });
+        });
+
+        cartItems.querySelectorAll('.increase').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                this.updateQuantity(id, 1);
+            });
+        });
+
+        cartItems.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                this.removeFromCart(id);
+            });
+        });
+
+        this.updateCartTotal();
+    }
+
+    updateQuantity(productId, change) {
+        const item = this.cart.find(item => item.id === productId);
+        if (item) {
+            item.quantity += change;
+            if (item.quantity <= 0) {
+                this.removeFromCart(productId);
+            } else {
+                this.updateCartCount();
+                this.saveCart();
+                this.renderCartItems();
+            }
+        }
+    }
+
+    updateCartTotal() {
+        const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const totalElement = document.getElementById('cartTotal');
+        if (totalElement) {
+            totalElement.textContent = total.toFixed(2);
+        }
+    }
+
+    saveCart() {
+        localStorage.setItem('nona-cart', JSON.stringify(this.cart));
+    }
+
+    loadCart() {
+        const savedCart = localStorage.getItem('nona-cart');
+        if (savedCart) {
+            this.cart = JSON.parse(savedCart);
+            this.updateCartCount();
+        }
+    }
+
+    // Product management
+    async loadProducts() {
+        try {
+            this.showLoading();
+            const response = await fetch('data/products.json');
+            this.products = await response.json();
+            this.renderFeaturedProducts();
+            this.hideLoading();
+        } catch (error) {
+            console.error('Error loading products:', error);
+            this.hideLoading();
+            this.showNotification('حدث خطأ في تحميل المنتجات', 'error');
+        }
+    }
+
+    renderFeaturedProducts() {
+        const grid = document.getElementById('featuredProductsGrid');
+        if (!grid) return;
+
+        const featuredProducts = this.products.slice(0, 6); // Show first 6 products
+        grid.innerHTML = featuredProducts.map(product => this.createProductCard(product)).join('');
+
+        // Add event listeners to product cards
+        grid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const productId = e.target.closest('.product-card').dataset.id;
+                const product = this.products.find(p => p.id == productId);
+                if (product) {
+                    this.addToCart(product);
+                }
+            });
+        });
+    }
+
+    createProductCard(product) {
+        const discount = product.old_price ? 
+            Math.round(((product.old_price - product.price) / product.old_price) * 100) : 0;
+
+        return `
+            <div class="product-card" data-id="${product.id}" role="listitem">
+                ${discount > 0 ? `<div class="discount-badge">${discount}%</div>` : ''}
+                <img src="${product.image}" alt="${product.title}" loading="lazy">
+                <h3>${product.title}</h3>
+                <div class="product-price">
+                    <span class="current-price">$${product.price}</span>
+                    ${product.old_price ? `<span class="old-price">$${product.old_price}</span>` : ''}
+                </div>
+                <div class="product-actions">
+                    <button class="btn primary add-to-cart-btn" aria-label="إضافة إلى عربة التسوق">
+                        <i class="fas fa-shopping-cart"></i> إضافة إلى العربة
+                    </button>
+                    <button class="btn secondary wishlist-btn" aria-label="إضافة إلى المفضلة">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Search functionality
+    handleSearch(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        // Implement search logic here
+        console.log('Searching for:', searchTerm);
+    }
+
+    // Login functionality
+    handleLogin() {
+        window.location.href = 'login.html';
+    }
+
+    // Utility functions
+    showLoading() {
+        document.getElementById('loadingSpinner')?.classList.add('show');
+    }
+
+    hideLoading() {
+        document.getElementById('loadingSpinner')?.classList.remove('show');
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.setAttribute('role', 'alert');
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button class="close-notification" aria-label="إغلاق الإشعار">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        // Add styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${type === 'error' ? 'var(--error-color)' : 
+                        type === 'success' ? 'var(--success-color)' : 'var(--primary-color)'};
+            color: white;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        `;
+
+        document.body.appendChild(notification);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+
+        // Close button
+        notification.querySelector('.close-notification').addEventListener('click', () => {
+            notification.remove();
+        });
+    }
+
+    // Initialize from localStorage
+    loadPreferences() {
+        const savedTheme = localStorage.getItem('nona-theme');
+        const savedLanguage = localStorage.getItem('nona-language');
+        
+        if (savedTheme) {
+            this.currentTheme = savedTheme;
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+        
+        if (savedLanguage) {
+            this.currentLanguage = savedLanguage;
+            document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = savedLanguage;
+            document.getElementById('langToggle').textContent = 
+                savedLanguage === 'ar' ? 'EN' : 'AR';
+        }
+        
+        this.loadCart();
+    }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.nonaApp = new NonaBeautyApp();
+    window.nonaApp.loadPreferences();
+});
+
+// Service Worker for PWA functionality (optional)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
     });
-  });
-}
-
-function scrollToSection(section) {
-  const sectionEl = document.getElementById(section + 'Section');
-  if (sectionEl) {
-    sectionEl.scrollIntoView({ behavior: 'smooth' });
-  }
-}
-
-function preloadImages() {
-  const images = [
-    'assets/images/slider1.jpg',
-    'assets/images/slider2.jpg',
-    'assets/images/slider3.jpg'
-  ];
-
-  images.forEach(src => {
-    const img = new Image();
-    img.src = src;
-  });
-}
-
-// Product interaction functions
-function addToCart(product) {
-  const cart = JSON.parse(localStorage.getItem('nb_cart') || '[]');
-  const existingItem = cart.find(item => item.id === product.id);
-  
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.title_en,
-      price: product.price,
-      image: product.image,
-      quantity: 1
-    });
-  }
-  
-  localStorage.setItem('nb_cart', JSON.stringify(cart));
-  updateCartUI();
-  
-  // Show success message
-  showNotification(`${product.title_en} added to cart!`, 'success');
-}
-
-function showQuickView(product) {
-  // This would typically open a modal with product details
-  // For now, we'll show an alert
-  showNotification(`Quick view: ${product.title_en} - $${product.price}`, 'info');
-}
-
-function showProductDetails(product) {
-  // This would typically navigate to a product detail page
-  // For now, we'll show an alert
-  showNotification(`Viewing details for: ${product.title_en}`, 'info');
-}
-
-function showTipDetails(tip) {
-  // This would typically show a modal or navigate to tip details
-  showNotification(`Beauty Tip: ${tip.title_en}`, 'info');
-}
-
-function showNotification(message, type = 'info') {
-  // Create notification element
-  const notification = document.createElement('div');
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: ${type === 'success' ? 'var(--success)' : 
-                 type === 'error' ? 'var(--error)' : 'var(--accent)'};
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    z-index: 3000;
-    transform: translateX(400px);
-    transition: transform 0.3s ease;
-    max-width: 300px;
-  `;
-  
-  notification.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;">
-      <i class="fas fa-${type === 'success' ? 'check' : 
-                     type === 'error' ? 'exclamation' : 'info'}"></i>
-      <span>${message}</span>
-    </div>
-  `;
-  
-  document.body.appendChild(notification);
-  
-  // Animate in
-  setTimeout(() => {
-    notification.style.transform = 'translateX(0)';
-  }, 100);
-  
-  // Remove after 3 seconds
-  setTimeout(() => {
-    notification.style.transform = 'translateX(400px)';
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 300);
-  }, 3000);
-}
-
-function updateCartUI() {
-  const cart = JSON.parse(localStorage.getItem('nb_cart') || '[]');
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  
-  const cartCount = document.querySelector('.cart-count');
-  if (cartCount) {
-    cartCount.textContent = totalItems;
-    cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-  }
-}
-
-// Controls (theme, lang, login)
-function bindTopControls() {
-  // Theme toggle
-  document.getElementById('themeToggle')?.addEventListener('click', () => {
-    const el = document.documentElement;
-    const isDark = el.getAttribute('data-theme') === 'dark';
-    el.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    
-    // Update icon
-    const icon = document.querySelector('#themeToggle i');
-    if (icon) {
-      icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
-    }
-    
-    // Save preference
-    localStorage.setItem('nb_theme', isDark ? 'light' : 'dark');
-  });
-
-  // Language toggle
-  document.getElementById('langToggle')?.addEventListener('click', () => {
-    const cur = document.documentElement.getAttribute('lang') || 'en';
-    if (cur === 'en') {
-      document.documentElement.setAttribute('lang', 'ar');
-      document.documentElement.setAttribute('dir', 'rtl');
-      document.getElementById('langToggle').textContent = 'EN';
-    } else {
-      document.documentElement.setAttribute('lang', 'en');
-      document.documentElement.setAttribute('dir', 'ltr');
-      document.getElementById('langToggle').textContent = 'AR';
-    }
-  });
-
-  // Cart toggle
-  document.getElementById('cartBtn')?.addEventListener('click', toggleCart);
-  document.getElementById('closeCart')?.addEventListener('click', toggleCart);
-
-  // Load saved theme
-  const savedTheme = localStorage.getItem('nb_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  
-  // Update theme icon
-  const themeIcon = document.querySelector('#themeToggle i');
-  if (themeIcon) {
-    themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-  }
-}
-
-function toggleCart() {
-  const cartSidebar = document.getElementById('cartSidebar');
-  if (cartSidebar) {
-    cartSidebar.classList.toggle('open');
-  }
-}
-
-function checkAuthUI() {
-  const user = JSON.parse(localStorage.getItem('nb_user') || 'null');
-  const loginBtn = document.getElementById('loginBtn');
-  const topControls = document.getElementById('topControls');
-
-  if (!loginBtn) return;
-
-  if (user) {
-    loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.name}`;
-    loginBtn.onclick = () => window.location.href = 'profile.html';
-    
-    if (user.role === 'admin') {
-      const nav = document.querySelector('.nav');
-      const adminBtn = document.createElement('button');
-      adminBtn.className = 'btn outline';
-      adminBtn.innerHTML = '<i class="fas fa-cog"></i> Admin';
-      adminBtn.onclick = () => window.location.href = 'admin.html';
-      nav.insertBefore(adminBtn, topControls);
-    }
-  } else {
-    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-    loginBtn.onclick = () => window.location.href = 'login.html';
-  }
-
-  // Update cart UI
-  updateCartUI();
-}
-
-// Initialize when DOM is loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initSite);
-} else {
-  initSite();
 }
